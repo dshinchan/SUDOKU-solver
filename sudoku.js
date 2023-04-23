@@ -1,143 +1,141 @@
-let board = [];
 
 var table = document.getElementById("mytable");
 var cell = table.rows[0].cells[0];
 
-function print_sudoku(){
-  for(var i = 1;i<9;i++){
-    for(var j = 1;j<9;j++){
-	cell = table.row[i].cells[j];
-      cell.innerHtml = board[i][j];
+function possible(grid, row, column, number) {
+  for (let i = 0; i < 9; i++) {
+    if (i === column) {
+      continue;
+    }
+    if (grid[row][i] === number) {
+      return false;
+    }
+  }
+
+  for (let i = 0; i < 9; i++) {
+    if (i === row) {
+      continue;
+    }
+    if (grid[i][column] === number) {
+      return false;
+    }
+  }
+
+  const x = Math.floor(row / 3) * 3;
+  const y = Math.floor(column / 3) * 3;
+
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      if (i + x === row || j + y === column) {
+        continue;
+      }
+      if (grid[x + i][y + j] === number) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+function hasEmptySpace(grid) {
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      if (grid[row][col] === 0) {
+        return [row, col];
+      }
+    }
+  }
+  return false;
+}
+
+function shuffle(array) {
+	let currentIndex = array.length, randomIndex;
+
+	// While there remain elements to shuffle.
+	while (currentIndex != 0) {
+
+		// Pick a remaining element.
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex--;
+
+		// And swap it with the current element.
+		[array[currentIndex], array[randomIndex]] = [
+			array[randomIndex], array[currentIndex]];
+	}
+
+	return array;
+}
+
+
+function solve(grid) {
+  let row,col;
+  if (!hasEmptySpace(grid)) {
+    return true;
+  } else {
+    [row, col] = hasEmptySpace(grid);
+  }
+
+  let lis = [1,2,3,4,5,6,7,8,9];
+  lis = shuffle(lis);
+
+
+  for (let n of lis) {
+    if (possible(grid, row, col, n)) {
+      grid[row][col] = n;
+      if(solve(grid)) {
+        return grid;
+      }
+      grid[row][col] = 0;
+    }
+  }
+
+  return false;
+  
+}
+
+
+
+function printBoard(grid) {
+  // console.log(table);
+  // console.log(table.rows.length);
+  // console.log(table.rows[0].cells.length);
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      // console.log(table);
+      cell = table.rows[i].cells[j];
+      cell.innerHTML = grid[i][j];
     }
   }
 }
 
 
-
-
-
-
-function generate_new_board(attempts = 0) {
-    
-  
-    // Step 1: Create an empty 9x9 grid
-    for (let i = 0; i < 9; i++) {
-      board.push(new Array(9).fill(0));
-    }
-  
-    // Step 2: Fill in each row of the grid with a random permutation of the numbers 1 to 9
-    for (let i = 0; i < 9; i++) {
-      board[i] = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    }
-  
-    for (let col = 0; col < 9; col++) {
-      let seen = new Set();
-      for (let row = 0; row < 9; row++) {
-        let num = board[row][col];
-        if (seen.has(num)) {
-          if (attempts < 100) {
-            return generate_new_board(attempts + 1);
-          } else {
-            throw new Error("Unable to generate valid Sudoku board");
-          }
-        }
-        seen.add(num);
+function checkValid(grid) {
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      if (!possible(grid, i, j, grid[i][j])) {
+        return false;
       }
     }
-  
-    // Step 4: Check that each 3x3 block of the grid contains no duplicates
-    for (let row = 0; row < 9; row += 3) {
-      for (let col = 0; col < 9; col += 3) {
-        let seen = new Set();
-        for (let r = row; r < row + 3; r++) {
-          for (let c = col; c < col + 3; c++) {
-            let num = board[r][c];
-            if (seen.has(num)) {
-              if (attempts < 100) {
-                return generate_new_board(attempts + 1);
-              } else {
-                throw new Error("Unable to generate valid Sudoku board");
-              }
-            }
-            seen.add(num);
-          }
-        }
-      }
-    }
-  
-    // Step 5: Board is valid, return it
-    print_sudoku();
   }
-  
-  function shuffleArray(array) {
-    // Fisher-Yates shuffle algorithm
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
+  return true;
+}
+
+function removeRandom(grid) {
+  for (let i = 0; i < 81 - 25; i++) {
+    const row = Math.floor(Math.random() * 9);
+    const col = Math.floor(Math.random() * 9);
+    grid[row][col] = 0;
   }
+}
 
 
+function generate_new_board(){
+  const grid = Array.from({length: 9}, () => Array(9).fill(0));
+  solve(grid);
+  removeRandom(grid);
+  printBoard(grid);
 
-
-
-
-
-// // function generate_new_board() {
-// //     var table = document.getElementById("mytable");
-
-
-// //   // Step 2: Fill in each row of the grid with a random permutation of the numbers 1 to 9
-// //   for (let i = 0; i < 9; i++) {
-// //     table.rows[i] = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-// //   }
-
-// //   // Step 3: Check that each column of the grid contains no duplicates
-// //   for (let col = 0; col < 9; col++) {
-// //     let seen = new Set();
-// //     for (let row = 0; row < 9; row++) {
-// //       let num = table.row[row].cell[col];
-// //       if (seen.has(num)) {
-// //         // Duplicate found, regenerate board
-// //         return generateSudokuBoard();
-// //       }
-// //       seen.add(num);
-// //     }
-// //   }
-
-// //   // Step 4: Check that each 3x3 block of the grid contains no duplicates
-// //   for (let row = 0; row < 9; row += 3) {
-// //     for (let col = 0; col < 9; col += 3) {
-// //       let seen = new Set();
-// //       for (let r = row; r < row + 3; r++) {
-// //         for (let c = col; c < col + 3; c++) {
-// //           let num = table.row[row].cell[col];
-// //           if (seen.has(num)) {
-// //             // Duplicate found, regenerate board
-// //             return generateSudokuBoard();
-// //           }
-// //           seen.add(num);
-// //         }
-// //       }
-// //     }
-// //   }
-
-// //   // Step 5: Board is valid, return it
-// //   print_sudoku();
-// // }
-
-// // function shuffleArray(array) {
-// //   // Fisher-Yates shuffle algorithm
-// //   for (let i = array.length - 1; i > 0; i--) {
-// //     const j = Math.floor(Math.random() * (i + 1));
-// //     [array[i], array[j]] = [array[j], array[i]];
-// //   }
-// //   return array;
-// // }
-
-
-
-
-
+  console.log(grid);
+}
 
