@@ -1,6 +1,7 @@
 
 var table = document.getElementById("mytable");
 var cell = table.rows[0].cells[0];
+var restart_grid;
 
 function possible(grid, row, column, number) {
   for (let i = 0; i < 9; i++) {
@@ -94,17 +95,27 @@ function solve(grid) {
   
 }
 
+function print_empty(grid) {
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      cell = table.rows[i].cells[j];
+      cell.innerHTML = " "
+    }
+  }
+}
+
+
 
 
 function printBoard(grid) {
-  // console.log(table);
-  // console.log(table.rows.length);
-  // console.log(table.rows[0].cells.length);
+  restart_grid=grid;
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-      // console.log(table);
+      if(grid[i][j]==0) continue;
       cell = table.rows[i].cells[j];
       cell.innerHTML = grid[i][j];
+      console.log(i,j);  
     }
   }
 }
@@ -132,10 +143,23 @@ function removeRandom(grid) {
 
 function generate_new_board(){
   const grid = Array.from({length: 9}, () => Array(9).fill(0));
+  print_empty(grid)
   solve(grid);
   removeRandom(grid);
   printBoard(grid);
-
   console.log(grid);
+}
+
+
+function print_restart_grid(){
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+
+      cell = table.rows[i].cells[j];
+      if(restart_grid[i][j]==0) cell.innerHTML=" ";
+      else cell.innerHTML = restart_grid[i][j];
+    }
+  }
 }
 
