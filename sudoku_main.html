@@ -1,12 +1,22 @@
+
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>
         SUDOKU SOLVER
     </title>
+
     <link rel="stylesheet" href="style_sudoku.css">
+
+
 </head>
-<body> 
+
+
+
+
+<body>
+    
     <div class = "board" id = "sudoku_board">
         
         <table id = "mytable">
@@ -109,11 +119,14 @@
                 <th></th>
                 <th></th>
             </tr>
+           
+    
+    
         </table>
 
         <div class="board_button">
             <button type="button" onclick = "generate_new_board()">newgame</button>
-            <button type="button">restart</button>
+            <button type="button" onclick="print_restart_grid()">restart</button>
         </div>
 
     </div>
