@@ -163,3 +163,29 @@ function print_restart_grid(){
   }
 }
 
+
+var th = document.querySelectorAll("th");
+console.log(th);
+
+for(const x of th){
+  x.addEventListener("click" , (event)=>{
+      var i = event.target.parentNode.rowIndex;
+      var j = event.target.cellIndex;
+      if(boolen_grid[i][j] == false){
+        event.target.innerHTML = value;
+      }
+      // console.log(i + " " + j);
+      // 
+  })
+}
+
+var select = document.querySelectorAll("#btn");
+console.log(select);
+
+
+for(const x of select){
+  x.addEventListener("click" , (event)=>{
+    value = event.target.value;
+  })
+}
+
