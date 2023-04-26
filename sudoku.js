@@ -1,7 +1,9 @@
-
+var value =0;
 var table = document.getElementById("mytable");
 var cell = table.rows[0].cells[0];
 var restart_grid;
+
+var boolen_grid = [[],[],[],[],[],[],[],[],[]];
 
 function possible(grid, row, column, number) {
   for (let i = 0; i < 9; i++) {
@@ -105,14 +107,15 @@ function print_empty(grid) {
   }
 }
 
-
-
-
 function printBoard(grid) {
   restart_grid=grid;
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-      if(grid[i][j]==0) continue;
+      if(grid[i][j]==0){
+        boolen_grid[i][j] = false;
+        continue;
+      }
+      boolen_grid[i][j] = true;
       cell = table.rows[i].cells[j];
       cell.innerHTML = grid[i][j];
       console.log(i,j);  
@@ -133,7 +136,7 @@ function checkValid(grid) {
 }
 
 function removeRandom(grid) {
-  for (let i = 0; i < 81 - 25; i++) {
+  for (let i = 0; i < 81 - 10; i++) {
     const row = Math.floor(Math.random() * 9);
     const col = Math.floor(Math.random() * 9);
     grid[row][col] = 0;
@@ -148,6 +151,7 @@ function generate_new_board(){
   removeRandom(grid);
   printBoard(grid);
   console.log(grid);
+  console.log(boolen_grid);
 }
 
 
@@ -162,7 +166,6 @@ function print_restart_grid(){
     }
   }
 }
-
 
 var th = document.querySelectorAll("th");
 console.log(th);
